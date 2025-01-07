@@ -4,10 +4,6 @@ from num2words import num2words
 from nltk.stem import WordNetLemmatizer
 import re
 
-nltk.download('punkt')
-nltk.download('stopwords')
-nltk.download('wordnet')
-
 # Diccionario de contracciones en inglés
 contractions_dict = {
     "ain't": "am not", "aren't": "are not", "can't": "cannot", "could've": "could have", 
@@ -76,12 +72,3 @@ def normalize(text):
     #words = lemmatize_verbs(words)    # Lematiza las palabras
     return ' '.join(words)            # Devuelve el texto limpio
 
-# Ejemplo de texto
-sample_text = "I can't believe it's not butter! I should've gone to the store earlier."
-
-# Limpiar y normalizar el texto
-cleaned_text = normalize(sample_text)
-
-# Mostrar el resultado
-print("Texto original:", sample_text)
-print("Texto limpio y normalizado:", cleaned_text)
