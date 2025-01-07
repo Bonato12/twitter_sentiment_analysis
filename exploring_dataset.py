@@ -5,6 +5,7 @@ from collections import Counter
 from util import import_dataset
 import matplotlib.pyplot as plt
 import config as cfg
+import pandas as pd
 
 dataset  = import_dataset(cfg.DATASET_TRAIN_MUESTRA_PREPROCESSED_PATH) 
 
@@ -74,3 +75,43 @@ def show_count_words_frequency(dataset):
     plt.title('100 Palabras Más Frecuentes en Tweets Negativos')
     plt.tight_layout()
     plt.show()
+
+def results():
+
+    data = {
+    "Model": ["NAIVE BAYES", "LOGISTIC REGRESSION", "RANDOM FOREST", "SVM", "VADER"],
+    "f1-Score": [0.763, 0.784, 0.754, 0.779, 0.645],
+    "Accuracy": [0.761, 0.782, 0.759, 0.778, 0.655],
+    "Recall": [0.776, 0.795, 0.743, 0.789, 0.628],
+    "Precision": [0.751, 0.772, 0.764, 0.769, 0.664]
+    }
+
+    # Crear el DataFrame
+    df = pd.DataFrame(data)
+
+    # Establecer la figura para el gráfico
+    fig, ax = plt.subplots(figsize=(10, 6))
+
+    # Graficar los valores de cada métrica
+    df.set_index("Model")[["f1-Score", "Accuracy", "Recall", "Precision"]].plot(kind='bar', ax=ax)
+
+    # Personalizar el gráfico
+    plt.title("Comparison of Model Metrics")
+    plt.ylabel("Scores")
+    plt.xlabel("Models")
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+
+    # Añadir los valores encima de las barras
+    for p in ax.patches:
+        ax.annotate(f'{p.get_height():.3f}', 
+                    (p.get_x() + p.get_width() / 2., p.get_height()), 
+                    xytext=(0, 5),  # distancia para evitar que el texto se superponga con la barra
+                    textcoords='offset points', 
+                    ha='center', va='bottom')
+
+    # Mostrar el gráfico
+    plt.show()
+
+
+results()    
