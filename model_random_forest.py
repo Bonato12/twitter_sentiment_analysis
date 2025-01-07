@@ -3,6 +3,7 @@ from util import show_data_evaluation
 from features_tf_idf import preprocess_tfidf,vectorizer
 
 def random_forest():
+    print("<------RANDOM FOREST------->")
     X_train_tfidf, X_test_tfidf, y_train_tfidf, y_test_tfidf= preprocess_tfidf()
     model = RandomForestClassifier()
     model.fit(X_train_tfidf, y_train_tfidf) 

@@ -4,6 +4,7 @@ from util import show_data_evaluation
 from features_tf_idf import preprocess_tfidf,vectorizer
 
 def logistic_regression():
+    print("<------LOGISTIC REGRESSION------->")
     X_train_tfidf, X_test_tfidf, y_train_tfidf, y_test_tfidf = preprocess_tfidf()
     model = LogisticRegression(solver='lbfgs',max_iter=1000) 
     model.fit(X_train_tfidf, y_train_tfidf) 

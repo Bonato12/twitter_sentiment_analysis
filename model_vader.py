@@ -24,6 +24,7 @@ def predict_sentiment(text):
     return format_output(score)
 
 def vader():
+    print("<------VADER------->")
     data = import_dataset(cfg.DATASET_TRAIN_MUESTRA_PREPROCESSED_PATH)
     data["vader_prediction"] = data["clean_tweet"].apply(predict_sentiment)
     show_data_evaluation(data['label'], data["vader_prediction"])
