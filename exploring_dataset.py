@@ -6,8 +6,9 @@ from util import import_dataset
 import matplotlib.pyplot as plt
 import config as cfg
 import pandas as pd
+from  generate_dataset import get_dataset_muestra
 
-dataset  = import_dataset(cfg.DATASET_TRAIN_MUESTRA_PREPROCESSED_PATH) 
+dataset  = get_dataset_muestra()
 
 def get_info():
     print("Cantidad Originales de Tweets: ")
