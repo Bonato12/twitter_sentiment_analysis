@@ -40,30 +40,3 @@ def evaluate_multiple_tweets_sentiment(tweets):
     }
 
 
-tweets = [
-"Que no nos goleen tiene nombre y apellido: Rodrigo Rey Qué pedazo de hombre hermano...",
-"Independiente está en partido exclusivamente por Rodrigo Rey",
-"Gracias por jugar para #Independiente, Rodrigo Rey",
-"rodrigo rey es el mejor arquero del fútbol argentino hoy por hoy",
-"Gracias a dios existe Rodrigo Rey 🙏🏻",
-"todos los días me despierto y apenas abro los ojos le agradezco a dios que Rodrigo Rey sea el arquero de este glorioso club.",
-"Que pedazo de arquero rodrigo rey",
-"TODO DE RODRIGO REY, EL MEJOR ARQUERO DE ARGENTINA",
-"TE AMO RODRIGO REY",
-"Señor arquero, Rodrigo Rey.",
-"Rodrigo Rey es un animal. Es arquero de equipo grande. Gana partidos.",
-"rodrigo rey el amor de mi vida",
-"rodrigo rey mi único héroe en este lío",
-"Si no existieras te inventaría, Rodrigo Rey",
-"Rodrigo Rey siempre está.",
-"QUE HOMBRE RODRIGO REY",
-]
-
-clean_tweets = [normalize(tweet) for tweet in tweets]
-resultado = evaluate_multiple_tweets_sentiment(tweets)
-print(f"Porcentaje de tweets positivos: {resultado['Positivos']}%")
-print(f"Porcentaje de tweets negativos: {resultado['Negativos']}%")
-    
-
-
-
