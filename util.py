@@ -759,9 +759,5 @@ tweets = [
 "QUE HOMBRE RODRIGO REY",
 ]
 
-clean_tweets = [normalize(tweet) for tweet in tweets]
-resultado = evaluate_multiple_tweets_sentiment(tweets)
-print(f"Porcentaje de tweets positivos: {resultado['Positivos']}%")
-print(f"Porcentaje de tweets negativos: {resultado['Negativos']}%")
-    
+
 

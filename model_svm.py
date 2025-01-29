@@ -2,7 +2,6 @@ from sklearn import svm
 from util import show_data_evaluation
 from features_tf_idf import X_train_tfidf, X_test_tfidf, y_train_tfidf, y_test_tfidf
 from features_tf_idf import vectorizer
-from preprocessing_text import normalize
 
 def svm_():
     print("<------SVM------->")
@@ -13,7 +12,7 @@ def svm_():
     return model
 
 
-def evaluate_multiple_tweets_sentiment(tweets):
+def evaluate_tweets_sentiment(tweets):
     model = svm_()
     positive_count = 0
     negative_count = 0
