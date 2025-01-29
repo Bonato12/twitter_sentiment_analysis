@@ -29,15 +29,27 @@ def random_forest_adjs():
     show_data_evaluation(y_test_tfidf, yprediction)
     return best_model
 
-def evaluate_tweet_sentiment(tweet):
-    rf = random_forest()
-    tweet_transformed = vectorizer().transform([tweet]).toarray() 
-    prediction = rf.predict(tweet_transformed)
-    if prediction == 1:
-        return "Positivo"
-    else:
-        return "Negativo"
+def evaluate_tweets_sentiment(tweets):
+    model = random_forest()
+    positive_count = 0
+    negative_count = 0
+    for tweet in tweets:
+        print(tweet)
+        tweet_transformed = vectorizer().transform([tweet]).toarray()
+        prediction = model.predict(tweet_transformed)
+        
+        if prediction == 1:
+            print("Positivo")
+            positive_count += 1
+        else:
+            print("Negativo")
+            negative_count += 1
     
-
-
-print(evaluate_tweet_sentiment("Estoy muy triste la verdad"))
+    total_tweets = len(tweets)
+    positive_percentage = (positive_count / total_tweets) * 100
+    negative_percentage = (negative_count / total_tweets) * 100
+    
+    return {
+        "Positivos": positive_percentage,
+        "Negativos": negative_percentage
+    }

@@ -11,7 +11,6 @@ def svm_():
     show_data_evaluation(y_test_tfidf, yprediction)    
     return model
 
-
 def evaluate_tweets_sentiment(tweets):
     model = svm_()
     positive_count = 0
