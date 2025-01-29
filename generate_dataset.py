@@ -3,7 +3,7 @@ from util import import_dataset,export_dataset
 import config as cfg
 import numpy as np
 
-def generate_dataset_es_muestra():
+def generate_dataset_muestra():
     input = cfg.DATASET_ES_PATH
     dataset  = import_dataset(input) 
     dataset = dataset[['label', 'tweet']]
@@ -23,6 +23,4 @@ def get_dataset_preprocessed():
     train_dataset  = import_dataset(cfg.DATASET_ES_MUESTRA_PREPROCESSED_PATH) 
     return train_dataset
     
-
-generate_dataset_es_muestra()
 
