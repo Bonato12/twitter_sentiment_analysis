@@ -27,4 +27,3 @@ def get_dataset_preprocessed():
     train_dataset  = import_dataset(cfg.DATASET_ES_MUESTRA_PREPROCESSED_PATH) 
     return train_dataset
     
-
