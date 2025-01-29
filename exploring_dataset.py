@@ -6,9 +6,9 @@ from util import import_dataset
 import matplotlib.pyplot as plt
 import config as cfg
 import pandas as pd
-from  generate_dataset import get_dataset_muestra
+from  generate_dataset import get_dataset_muestra,get_dataset_preprocessed
 
-dataset  = get_dataset_muestra()
+dataset  = get_dataset_preprocessed()
 
 def get_info():
     print("Cantidad Originales de Tweets: ")
@@ -30,6 +30,7 @@ def get_info():
     print((dataset['label'] == 2).sum())
     show_label_tweet()
     show_count_words_frequency()
+    show_count_words_neg_pos_frequency()
 
 def show_label_tweet():
     plt.figure(figsize=(8, 6))
@@ -51,7 +52,7 @@ def show_count_words_frequency():
     plt.title('100 Palabras Más Frecuentes')
     plt.show()
 
-def show_count_words_frequency(dataset):
+def show_count_words_neg_pos_frequency():
     positive_tweets = dataset[dataset['label'] == 1]['clean_tweet']
     negative_tweets = dataset[dataset['label'] == 0]['clean_tweet']
     positive_text = ' '.join(positive_tweets).lower()
@@ -115,4 +116,4 @@ def results():
     plt.show()
 
 
-results()    
+get_info()
