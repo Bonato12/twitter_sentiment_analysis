@@ -7,6 +7,7 @@ DATASET_TRAIN_MUESTRA_PATH = PATH_BASE + "//datasets/dataset_train_muestra.csv"
 DATASET_TRAIN_MUESTRA_PREPROCESSED_PATH =  PATH_BASE + "//datasets/dataset_train_muestra_preprocessed.csv"
 DATASET_TRAIN_MUESTRA_PATH_TEST = PATH_BASE + "//datasets/dataset_train_muestra_test.csv"
 
+DATASET_PATH = PATH_BASE + "//datasets/dataset.csv"
 DATASET_ES_PATH = PATH_BASE + "//datasets/dataset_es.csv"
 DATASET_ES_MUESTRA_PATH = PATH_BASE + "//datasets/dataset_es_muestra.csv"
 DATASET_ES_MUESTRA_PREPROCESSED_PATH = PATH_BASE + "//datasets/dataset_es_muestra_preprocessed.csv"

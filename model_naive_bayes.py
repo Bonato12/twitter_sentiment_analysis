@@ -11,4 +11,3 @@ def naive_bayes():
     yprediction = model.predict(X_test_tfidf)
     show_data_evaluation(y_test_tfidf, yprediction) 
     return model
-

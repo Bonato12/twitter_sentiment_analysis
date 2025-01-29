@@ -4,7 +4,7 @@ from generate_dataset import get_dataset_preprocessed
 
 train_dataset = get_dataset_preprocessed()
 
-tfidf_vectorizer = TfidfVectorizer()
+tfidf_vectorizer = TfidfVectorizer(max_features=5000)
 tfidf_vectorizer.fit(train_dataset['clean_tweet'].values.astype('U'))
 x = tfidf_vectorizer.transform(train_dataset['clean_tweet'].values.astype('U'))
 y = train_dataset['label']

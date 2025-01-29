@@ -12,12 +12,14 @@ def preprocessing_dataset():
     print("Fin")
 
 def preprocessing_dataset_es():
-    input = cfg.DATASET_TRAIN_MUESTRA_PATH_TEST
+    input = cfg.DATASET_ES_MUESTRA_PATH
     dataset  = import_dataset(input) 
-    #dataset['clean_tweet'] = dataset['tweet'].apply(normalize)
-    dataset['clean_tweet'] = dataset['tweet']
+    dataset['clean_tweet'] = dataset['tweet'].apply(normalize)
+    #dataset['clean_tweet'] = dataset['tweet']
     dataset = dataset[dataset['clean_tweet'].notnull()]  # Elimina valores nulos
-    dataset = dataset[dataset['label'].notnull()]  # Elimina valores nulos
     dataset = dataset[dataset['clean_tweet'].str.strip() != '']  # Elimina cadenas vacías
     export_dataset(dataset,cfg.DATASET_ES_MUESTRA_PREPROCESSED_PATH)
     print("Fin")
+
+
+preprocessing_dataset_es()

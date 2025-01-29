@@ -17,10 +17,10 @@ def show_data_evaluation(yvalid,yprediction):
     print(classification_report(yvalid, yprediction))
 
 def import_dataset(path):
-    return pd.read_csv(path,encoding='ISO-8859-1')
+    return pd.read_csv(path)
 
 def export_dataset(dataset,path):
-    dataset.to_csv(path,index=False)
+    dataset.to_csv(path,index=False,float_format='%d')
 
 def tweet():
     tweet_ids = ["1877489261898838098","1877437940395106661","1877522314452926655","1877523839967535119,1877404176298230164,1877411360897737055","1877426476338835904",

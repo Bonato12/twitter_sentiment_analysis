@@ -38,3 +38,6 @@ def evaluate_tweet_sentiment(tweet):
     else:
         return "Negativo"
     
+
+
+print(evaluate_tweet_sentiment("Estoy muy triste la verdad"))
