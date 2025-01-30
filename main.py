@@ -17,8 +17,7 @@ def main():
     svm_()
 
 
-def execute_sentinemt_analysis():
-    tweets = []
+def execute_sentinemt_analysis(tweets):
     clean_tweets = [normalize(tweet) for tweet in tweets]
     resultado = evaluate_tweets_sentiment(clean_tweets)
     print(f"Porcentaje de tweets positivos: {resultado['Positivos']}%")
@@ -28,4 +27,3 @@ def execute_sentinemt_analysis():
 
 if __name__ == "__main__":
     main()    
-    execute_sentinemt_analysis()
