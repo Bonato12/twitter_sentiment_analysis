@@ -6,8 +6,6 @@ from model_naive_bayes import naive_bayes
 from model_svm import svm_,evaluate_tweets_sentiment
 from preprocessing_text import normalize
 
-#from model_vader import vader
-
 def main():
     generate_dataset_muestra()
     preprocessing_dataset()
@@ -20,10 +18,8 @@ def main():
 def execute_sentinemt_analysis(tweets):
     clean_tweets = [normalize(tweet) for tweet in tweets]
     resultado = evaluate_tweets_sentiment(clean_tweets)
-    print(f"Porcentaje de tweets positivos: {resultado['Positivos']}%")
-    print(f"Porcentaje de tweets negativos: {resultado['Negativos']}%")
     
-
 
 if __name__ == "__main__":
     main()    
+ 

@@ -73,15 +73,14 @@ def get_tweet_by_id(headers, tweet_id):
 def get_responses_to_tweet(headers, tweet_id):
     url = "https://api.twitter.com/2/tweets/search/recent"
     params = {
-        "query": f"conversation_id:{tweet_id}",  # Usamos el `conversation_id` para encontrar las respuestas
-        "tweet.fields": "author_id,conversation_id,in_reply_to_user_id",  # Información útil para filtrar respuestas
-        "max_results": 100  # El número de respuestas a obtener
+        "query": f"conversation_id:{tweet_id}",  
+        "tweet.fields": "author_id,conversation_id,in_reply_to_user_id",  
+        "max_results": 100 
     }
     response = requests.get(url, headers=headers, params=params)
     return response.json()
 
-def get_responses():
-    tweet_id = "1884728165567738103" 
+def get_responses(tweet_id):
     headers = create_headers(bearer_token)
     tweet_data = get_tweet_by_id(headers, tweet_id)
     if 'data' in tweet_data:
@@ -97,5 +96,27 @@ def get_responses():
         print("No se encontraron respuestas o hubo un error:", responses)
 
     
+def get_trends(headers, woeid):
+    url = f"https://api.twitter.com/1.1/trends/place.json"
+    params = {
+        "id": woeid  # WOEID de Argentina
+    }
+    response = requests.get(url, headers=headers, params=params)
+    return response.json()
+
+def get_trends_in_argentina():
+    headers = create_headers(bearer_token)
+    woeid_argentina = 23424747  # WOEID de Argentina
+    trends = get_trends(headers, woeid_argentina)
+    print(trends)
+    if trends:
+        for trend in trends[0]["trends"]:
+            print(f"Tendencia: {trend['name']}")
+    else:
+        print("No se encontraron tendencias o hubo un error:", trends)
+
+# Llamar la función para obtener y mostrar las tendencias en Argentina
+#get_trends_in_argentina()
 
 
+get_responses()
