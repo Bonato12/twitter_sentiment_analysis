@@ -4,6 +4,7 @@ from num2words import num2words
 from nltk.stem import WordNetLemmatizer
 import re
 from textblob import TextBlob
+import emoji
 
 nltk.download('stopwords')
 nltk.download('punkt')
@@ -56,6 +57,17 @@ antonimos = {
 }
 # Conectores de contradicción
 conectores_contradiccion = {"pero", "aunque", "sin embargo", "no obstante"}
+
+def eliminar_menciones(text):
+    return re.sub(r'@\w+', '', text).strip()
+
+# Función para reemplazar emojis por descripciones
+def reemplazar_emojis(text):
+    return emoji.demojize(text, language='es')
+
+# Función para eliminar emojis directamente
+def eliminar_emojis(text):
+    return emoji.replace_emoji(text, replace='')
 
 # Función para reemplazar URLs en el texto
 def reemplazar_urls(texto):
@@ -133,11 +145,13 @@ def manejar_contradicciones(text):
 # Normalización completa del texto
 def normalize(text, invertir_polaridad=False, resolver_contradicciones=False):
     text = reemplazar_urls(text)
-    if resolver_contradicciones:
-        text = manejar_contradicciones(text)
+    #text = reemplazar_emojis(text)
+    text = eliminar_menciones(text)
+    #if resolver_contradicciones:
+    #    text = manejar_contradicciones(text)
     words = tokenize(text)
     words = to_lowercase(words)
-    words = manejar_negaciones(words, invertir_polaridad=invertir_polaridad)  # Manejo de negaciones
+    #words = manejar_negaciones(words, invertir_polaridad=invertir_polaridad)  # Manejo de negaciones
     words = eliminar_stopwords(words)
     words = remove_punctuation(words)
     words = lemmatize_verbs(words)
