@@ -6,6 +6,7 @@ from textblob import TextBlob
 import emoji
 import spacy
 from spacy.tokens import Doc
+import stanza
 
 nlp = spacy.load("es_core_news_sm")
 
@@ -13,6 +14,9 @@ nltk.download('stopwords')
 nltk.download('punkt')
 nltk.download('wordnet')
 nltk.download('punkt_tab')
+
+#stanza.download('es')
+nlp = stanza.Pipeline(lang='es', processors='tokenize,mwt,pos,lemma')
 
 # Lista de stopwords importantes que queremos conservar
 stopwords_importantes = {
@@ -93,17 +97,16 @@ def eliminar_urls(tokens):
 # Lematización de verbos
 def lemmatize_verbs(tokens):
     tokens = [token for token in tokens if token.strip() != '']
-    doc = Doc(nlp.vocab, words=tokens)
-    for name, proc in nlp.pipeline:
-        doc = proc(doc)
-
-    new_tokens = []
-    for token in doc:
-        if token.pos_ in ["VERB", "AUX"]:
-            new_tokens.append(token.lemma_)
-        else:
-            new_tokens.append(token.text)
-    return new_tokens
+    text = " ".join(tokens)
+    doc = nlp(text)
+    lemmatized_tokens = []
+    for sent in doc.sentences:
+        for word in sent.words:
+            if word.upos in ["VERB", "AUX"]:
+                lemmatized_tokens.append(word.lemma if word.lemma else word.text)
+            else:
+                lemmatized_tokens.append(word.text)
+    return lemmatized_tokens
 
 # Reemplazo de números por palabras
 def replace_number(words):
