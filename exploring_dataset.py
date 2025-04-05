@@ -1,36 +1,42 @@
-from util import import_dataset
-from wordcloud import WordCloud
+# --- IMPORTACIONES ---
+import pandas as pd
+import matplotlib.pyplot as plt
 import seaborn as sns
 from collections import Counter
-from util import import_dataset
-import matplotlib.pyplot as plt
-import config as cfg
-import pandas as pd
-from  generate_dataset import get_dataset_muestra,get_dataset_preprocessed
+from wordcloud import WordCloud
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+import nltk
+import emoji
+import re
 
-dataset  = get_dataset_preprocessed()
+from util import import_dataset
+from generate_dataset import get_dataset_muestra, get_dataset_preprocessed
+import config as cfg
+
+# --- DESCARGA DE RECURSOS NLTK ---
+nltk.download('stopwords')
+nltk.download('punkt')
+
+# --- CARGA DE DATOS ---
+dataset = get_dataset_muestra()
+stop_words = set(stopwords.words('spanish'))
+
+# --- FUNCIONES GENERALES DE INFORMACIÓN Y VISUALIZACIÓN ---
 
 def get_info():
-    print("Cantidad Originales de Tweets: ")
-    print(len(dataset))
+    print("Cantidad Originales de Tweets:", len(dataset))
+    print("Cantidad de Tweets Positivos:", (dataset['label'] == 1).sum())
+    print("Cantidad de Tweets Negativos:", (dataset['label'] == 0).sum())
+    print("Cantidad de Tweets Neutrales:", (dataset['label'] == 2).sum())
 
-    print("Cantidad de Tweets Positivos")
-    print((dataset['label'] == 1).sum())
-
-    print("Cantidad Originales de Tweets: ")
-    print(len(dataset))
-
-    print("Cantidad de Tweets Positivos")
-    print((dataset['label'] == 1).sum())
-
-    print("Cantidad de Tweets Negativos")
-    print((dataset['label'] == 0).sum())
-
-    print("Cantidad de Tweets Neutrales")
-    print((dataset['label'] == 2).sum())
     show_label_tweet()
     show_count_words_frequency()
-    show_count_words_neg_pos_frequency()
+    show_positive_wordcloud()
+    show_negative_wordcloud()
+    show_positive_wordcloud_no_stopword()
+    show_negative_wordcloud_no_stopword()
+    analizar_elementos_tweet()
 
 def show_label_tweet():
     plt.figure(figsize=(8, 6))
@@ -41,7 +47,7 @@ def show_label_tweet():
     plt.show()
 
 def show_count_words_frequency():
-    all_text = ' '.join(dataset['clean_tweet']).lower()
+    all_text = ' '.join(dataset['tweet']).lower()
     words = all_text.split()
     word_counts = Counter(words)
     top_words = dict(word_counts.most_common(100))
@@ -52,67 +58,153 @@ def show_count_words_frequency():
     plt.title('100 Palabras Más Frecuentes')
     plt.show()
 
-def show_count_words_neg_pos_frequency():
-    positive_tweets = dataset[dataset['label'] == 1]['clean_tweet']
-    negative_tweets = dataset[dataset['label'] == 0]['clean_tweet']
-    positive_text = ' '.join(positive_tweets).lower()
-    negative_text = ' '.join(negative_tweets).lower()
-    positive_words = positive_text.split()
-    negative_words = negative_text.split()
-    positive_word_counts = Counter(positive_words)
-    negative_word_counts = Counter(negative_words)
-    top_positive_words = dict(positive_word_counts.most_common(100))
-    top_negative_words = dict(negative_word_counts.most_common(100))
-    positive_wordcloud = WordCloud(width=800, height=400, background_color='white').generate_from_frequencies(top_positive_words)
-    negative_wordcloud = WordCloud(width=800, height=400, background_color='white').generate_from_frequencies(top_negative_words)
-    # Mostrar las nubes de palabras
-    plt.figure(figsize=(12, 6))
-    plt.subplot(1, 2, 1)
-    plt.imshow(positive_wordcloud, interpolation='bilinear')
+def generate_wordcloud_from_label(label_value, title, remove_stopwords=False):
+    tweets = dataset[dataset['label'] == label_value]['tweet']
+    text = ' '.join(tweets).lower()
+    words = text.split()
+
+    if remove_stopwords:
+        words = [word for word in words if word not in stop_words]
+
+    word_counts = Counter(words)
+    top_words = dict(word_counts.most_common(100))
+    wordcloud = WordCloud(width=800, height=400, background_color='white').generate_from_frequencies(top_words)
+
+    plt.figure(figsize=(8, 4))
+    plt.imshow(wordcloud, interpolation='bilinear')
     plt.axis('off')
-    plt.title('100 Palabras Más Frecuentes en Tweets Positivos')
-    plt.subplot(1, 2, 2)
-    plt.imshow(negative_wordcloud, interpolation='bilinear')
-    plt.axis('off')
-    plt.title('100 Palabras Más Frecuentes en Tweets Negativos')
+    plt.title(title)
     plt.tight_layout()
     plt.show()
 
-def results():
+def show_positive_wordcloud():
+    generate_wordcloud_from_label(1, '100 Palabras Más Frecuentes en Tweets Positivos')
 
+def show_negative_wordcloud():
+    generate_wordcloud_from_label(0, '100 Palabras Más Frecuentes en Tweets Negativos')
+
+def show_positive_wordcloud_no_stopword():
+    generate_wordcloud_from_label(1, '100 Palabras Más Frecuentes en Tweets Positivos (sin Stopwords)', remove_stopwords=True)
+
+def show_negative_wordcloud_no_stopword():
+    generate_wordcloud_from_label(0, '100 Palabras Más Frecuentes en Tweets Negativos (sin Stopwords)', remove_stopwords=True)
+
+# --- MÉTRICAS DE MODELOS ---
+
+def results():
     data = {
-    "Model": ["NAIVE BAYES", "LOGISTIC REGRESSION", "RANDOM FOREST", "SVM", "VADER"],
-    "f1-Score": [0.763, 0.784, 0.754, 0.779, 0.645],
-    "Accuracy": [0.761, 0.782, 0.759, 0.778, 0.655],
-    "Recall": [0.776, 0.795, 0.743, 0.789, 0.628],
-    "Precision": [0.751, 0.772, 0.764, 0.769, 0.664]
+        "Model": ["NAIVE BAYES", "LOGISTIC REGRESSION", "RANDOM FOREST", "SVM", "VADER"],
+        "f1-Score": [0.763, 0.784, 0.754, 0.779, 0.645],
+        "Accuracy": [0.761, 0.782, 0.759, 0.778, 0.655],
+        "Recall": [0.776, 0.795, 0.743, 0.789, 0.628],
+        "Precision": [0.751, 0.772, 0.764, 0.769, 0.664]
     }
 
-    # Crear el DataFrame
     df = pd.DataFrame(data)
-
-    # Establecer la figura para el gráfico
     fig, ax = plt.subplots(figsize=(10, 6))
-
-    # Graficar los valores de cada métrica
     df.set_index("Model")[["f1-Score", "Accuracy", "Recall", "Precision"]].plot(kind='bar', ax=ax)
 
-    # Personalizar el gráfico
     plt.title("Comparison of Model Metrics")
     plt.ylabel("Scores")
     plt.xlabel("Models")
     plt.xticks(rotation=45)
     plt.tight_layout()
 
-    # Añadir los valores encima de las barras
     for p in ax.patches:
-        ax.annotate(f'{p.get_height():.3f}', 
-                    (p.get_x() + p.get_width() / 2., p.get_height()), 
-                    xytext=(0, 5),  # distancia para evitar que el texto se superponga con la barra
-                    textcoords='offset points', 
+        ax.annotate(f'{p.get_height():.3f}',
+                    (p.get_x() + p.get_width() / 2., p.get_height()),
+                    xytext=(0, 5),
+                    textcoords='offset points',
                     ha='center', va='bottom')
 
-    # Mostrar el gráfico
+    plt.show()
+
+# --- FUNCIONES DE CONTEO LÉXICO Y SÍMBOLOS ---
+
+def contar_stopwords(texto):
+    palabras = word_tokenize(str(texto).lower())
+    return sum(1 for palabra in palabras if palabra in stop_words)
+
+def contar_emojis(texto):
+    return len([c for c in str(texto) if c in emoji.EMOJI_DATA])
+
+def contar_numeros(texto):
+    return len(re.findall(r'\b\d+\b', str(texto)))
+
+def contar_menciones(texto):
+    return len(re.findall(r'@\w+', str(texto)))
+
+def contar_urls(texto):
+    return len(re.findall(r'(https?://\S+|www\.\S+)', str(texto)))
+
+def contar_palabras_limpias(texto):
+    texto = re.sub(r'@\w+|#\w+|https?://\S+|www\.\S+|\b\d+\b', '', str(texto))
+    palabras = re.findall(r'\b[a-zA-ZáéíóúüñÁÉÍÓÚÜÑ]+\b', texto)
+    return len(palabras)
+
+# --- FUNCIONES PARA MAYÚSCULAS / MINÚSCULAS / MIXTAS ---
+
+def limpiar_texto(texto):
+    return re.sub(r'@\w+|#\w+|https?://\S+|www\.\S+', '', str(texto))
+
+def contar_mayusculas(texto):
+    texto = limpiar_texto(texto)
+    return len(re.findall(r'\b[A-ZÁÉÍÓÚÜÑ]{2,}\b', texto))
+
+def contar_minusculas(texto):
+    texto = limpiar_texto(texto)
+    return len(re.findall(r'\b[a-záéíóúüñ]{2,}\b', texto))
+
+def contar_mixtas(texto):
+    texto = limpiar_texto(texto)
+    palabras = re.findall(r'\b\w+\b', texto)
+    return len([p for p in palabras if not p.islower() and not p.isupper()])
+
+# --- APLICACIÓN AL DATASET ---
+
+def analizar_elementos_tweet():
+    # Aplicación de funciones de conteo al dataset
+    dataset['stopwords'] = dataset['tweet'].apply(contar_stopwords)
+    dataset['emoji_count'] = dataset['tweet'].apply(contar_emojis)
+    dataset['menciones_count'] = dataset['tweet'].apply(contar_menciones)
+    dataset['url_count'] = dataset['tweet'].apply(contar_urls)
+    dataset['numeros_count'] = dataset['tweet'].apply(contar_numeros)
+    dataset['hashtag_count'] = dataset['tweet'].astype(str).str.count(r'#')
+    dataset['word_count'] = dataset['tweet'].apply(contar_palabras_limpias)
+    dataset['mayusculas_count'] = dataset['tweet'].apply(contar_mayusculas)
+    dataset['minusculas_count'] = dataset['tweet'].apply(contar_minusculas)
+    dataset['mixtas_count'] = dataset['tweet'].apply(contar_mixtas)
+
+    # Cálculo de totales
+    elementos_especiales_total = (
+        dataset['menciones_count'].sum() +
+        dataset['hashtag_count'].sum() +
+        dataset['url_count'].sum()
+    )
+
+    totales = {
+        'Emojis': dataset['emoji_count'].sum(),
+        'Números': dataset['numeros_count'].sum(),
+        'Elementos Especiales': elementos_especiales_total,
+        'Stopwords': dataset['stopwords'].sum(),
+        'Palabras mixtas': dataset['mixtas_count'].sum(),
+        'Palabras en minúsculas': dataset['minusculas_count'].sum(),
+        'Palabras en mayúsculas': dataset['mayusculas_count'].sum(),
+        'Palabras': dataset['word_count'].sum()
+    }
+
+    # Visualización
+    plt.figure(figsize=(12, 7))
+    bars = plt.barh(list(totales.keys()), list(totales.values()), color='skyblue')
+    plt.xlabel('Cantidad')
+    plt.title('Conteo Total de Elementos en Tweets')
+    plt.grid(axis='x', linestyle='--', alpha=0.7)
+
+    for bar in bars:
+        width = bar.get_width()
+        plt.text(width + 5, bar.get_y() + bar.get_height() / 2, str(int(width)), va='center')
+
+    plt.tight_layout()
     plt.show()
 
 

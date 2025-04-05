@@ -1,10 +1,13 @@
 import nltk
 from nltk.corpus import stopwords
 from num2words import num2words
-from nltk.stem import WordNetLemmatizer
 import re
 from textblob import TextBlob
 import emoji
+import spacy
+from spacy.tokens import Doc
+
+nlp = spacy.load("es_core_news_sm")
 
 nltk.download('stopwords')
 nltk.download('punkt')
@@ -58,19 +61,15 @@ antonimos = {
 # Conectores de contradicción
 conectores_contradiccion = {"pero", "aunque", "sin embargo", "no obstante"}
 
-def eliminar_menciones(text):
+def remove_mentions(text):
     return re.sub(r'@\w+', '', text).strip()
 
 # Función para reemplazar emojis por descripciones
-def reemplazar_emojis(text):
+def convert_emojis_to_words(text):
     return emoji.demojize(text, language='es')
 
-# Función para eliminar emojis directamente
-def eliminar_emojis(text):
-    return emoji.replace_emoji(text, replace='')
-
 # Función para reemplazar URLs en el texto
-def reemplazar_urls(texto):
+def remove_urls(texto):
     return re.sub(r'http[s]?://\S+|www\.\S+', '', texto)
 
 # Tokenización de texto
@@ -82,7 +81,7 @@ def to_lowercase(words):
     return [word.lower() for word in words]
 
 # Eliminación de stopwords pero conservando las importantes
-def eliminar_stopwords(tokens):
+def remove_stopwords(tokens):
     stop_words = set(stopwords.words('spanish'))
     return [token for token in tokens if token not in stop_words or token in stopwords_importantes]
 
@@ -92,9 +91,19 @@ def eliminar_urls(tokens):
     return [token for token in tokens if not url_pattern.match(token)]
 
 # Lematización de verbos
-def lemmatize_verbs(words):
-    lemmatizer = WordNetLemmatizer()
-    return [lemmatizer.lemmatize(word, pos='v') for word in words]
+def lemmatize_verbs(tokens):
+    tokens = [token for token in tokens if token.strip() != '']
+    doc = Doc(nlp.vocab, words=tokens)
+    for name, proc in nlp.pipeline:
+        doc = proc(doc)
+
+    new_tokens = []
+    for token in doc:
+        if token.pos_ in ["VERB", "AUX"]:
+            new_tokens.append(token.lemma_)
+        else:
+            new_tokens.append(token.text)
+    return new_tokens
 
 # Reemplazo de números por palabras
 def replace_number(words):
@@ -142,20 +151,15 @@ def manejar_contradicciones(text):
                     return segunda_parte.strip()
     return text
 
-# Normalización completa del texto
-def normalize(text, invertir_polaridad=False, resolver_contradicciones=False):
-    text = reemplazar_urls(text)
-    #text = reemplazar_emojis(text)
-    text = eliminar_menciones(text)
-    #if resolver_contradicciones:
-    #    text = manejar_contradicciones(text)
-    words = tokenize(text)
-    words = to_lowercase(words)
-    #words = manejar_negaciones(words, invertir_polaridad=invertir_polaridad)  # Manejo de negaciones
-    words = eliminar_stopwords(words)
-    words = remove_punctuation(words)
-    words = lemmatize_verbs(words)
-    words = replace_number(words)
-    return ' '.join(words)
-
+def normalize(text):
+    text = remove_urls(text)
+    text = remove_mentions(text)
+    text = convert_emojis_to_words(text)
+    text = tokenize(text)
+    text = to_lowercase(text)
+    text = remove_stopwords(text)
+    text = replace_number(text)
+    text = remove_punctuation(text)
+    text = lemmatize_verbs(text)
+    return ' '.join(text)
 
