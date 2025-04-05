@@ -3,7 +3,7 @@ from preprocessing_dataset import preprocessing_dataset
 from model_logistic_regression import logistic_regression
 from model_random_forest import random_forest
 from model_naive_bayes import naive_bayes
-from model_svm import svm_,evaluate_tweets_sentiment
+from model_svm import svm_,evaluate_tweets_sentiment,svm_regression_adjustment
 from preprocessing_text import normalize
 
 def main():
@@ -13,6 +13,10 @@ def main():
     logistic_regression()
     random_forest()
     svm_()
+    svm_regression_adjustment()
+
+
+
 
 
 def execute_sentinemt_analysis(tweets):

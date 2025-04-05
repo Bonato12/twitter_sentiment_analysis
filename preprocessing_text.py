@@ -2,11 +2,12 @@ import nltk
 from nltk.corpus import stopwords
 from num2words import num2words
 import re
-from textblob import TextBlob
 import emoji
 import spacy
-from spacy.tokens import Doc
 import stanza
+
+import warnings
+warnings.filterwarnings("ignore", category=FutureWarning)
 
 nlp = spacy.load("es_core_news_sm")
 
@@ -25,43 +26,6 @@ stopwords_importantes = {
     "todo", "poco", "nada", "tal"
 }
 
-# Diccionario de antónimos básicos para invertir polaridad
-antonimos = {
-    "enojado": "tranquilo",
-    "feliz": "triste",
-    "triste": "alegre",
-    "bueno": "malo",
-    "fuerte": "débil",
-    "rápido": "lento",
-    "fácil": "difícil",
-    "alto": "bajo",
-    "largo": "corto",
-    "hermoso": "feo",
-    "brillante": "opaco",
-    "rico": "pobre",
-    "caro": "barato",
-    "limpio": "sucio",
-    "caliente": "frío",
-    "joven": "viejo",
-    "suave": "áspero",
-    "inteligente": "tonto",
-    "amable": "grosero",
-    "generoso": "egoísta",
-    "honesto": "falso",
-    "trabajador": "perezoso",
-    "valiente": "cobarde",
-    "optimista": "pesimista",
-    "simpático": "antipático",
-    "sano": "enfermo",
-    "ordenado": "desordenado",
-    "seguro": "inseguro",
-    "positivo": "negativo",
-    "sabio": "ignorante",
-    "útil": "inútil",
-    "abierto": "cerrado",
-    "tranquilo": "nervioso",
-    "amable": "hostil"
-}
 # Conectores de contradicción
 conectores_contradiccion = {"pero", "aunque", "sin embargo", "no obstante"}
 
@@ -116,43 +80,14 @@ def replace_number(words):
 def remove_punctuation(words):
     return [re.sub(r'[^\w\s]', '', word) for word in words if word.strip()]
 
-# Manejo de negaciones con opción de invertir polaridad
-def manejar_negaciones(palabras, invertir_polaridad=False):
-    palabras_procesadas = []
-    negar = False  # Marcamos si estamos en una sección negativa
-    for i, palabra in enumerate(palabras):
-        # Detectamos si hay una negación como "no", "nunca", "jamás", etc.ç
-        if palabra.lower() in {"no", "nunca", "jamás", "sin"}:
-            negar = True  # Marcamos que encontramos una negació
-        elif negar and palabra.isalpha():  # Si viene una palabra después de la negación
-            if invertir_polaridad and palabra in antonimos:
-                palabras_procesadas.append(antonimos[palabra])  # Reemplazamos por su antónimo
-            else:
-                palabras_procesadas.append(palabra)  # Si no invertimos, dejamos la palabra tal cual
-        else:
-            palabras_procesadas.append(palabra)  # Agregamos palabras no afectadas
-
-    if invertir_polaridad:
-        palabras_procesadas = [palabra for palabra in palabras_procesadas if palabra.lower() != "no"]
-
-    return palabras_procesadas
-
-# Manejo de contradicciones
 def manejar_contradicciones(text):
-    for conector in conectores_contradiccion:
-        if conector in text:
-            partes = text.split(conector, 1)
-            if len(partes) == 2:
-                primera_parte, segunda_parte = partes
-                pol_primera = TextBlob(primera_parte).sentiment.polarity
-                pol_segunda = TextBlob(segunda_parte).sentiment.polarity
-                
-                # Si hay contradicción, priorizar la parte más fuerte en sentimiento
-                if abs(pol_primera) > abs(pol_segunda):
-                    return primera_parte.strip()
-                else:
-                    return segunda_parte.strip()
-    return text
+    patron = r'\b(?:' + '|'.join(map(re.escape, conectores_contradiccion)) + r')\b'
+    partes = re.split(patron, text, flags=re.IGNORECASE)
+    if len(partes) > 1:
+        ultima_parte = partes[-1].strip()
+        return ultima_parte
+    else:
+        return text
 
 def normalize(text):
     text = remove_urls(text)
@@ -165,4 +100,5 @@ def normalize(text):
     text = remove_punctuation(text)
     text = lemmatize_verbs(text)
     return ' '.join(text)
+
 

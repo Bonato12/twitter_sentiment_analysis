@@ -9,6 +9,8 @@ from nltk.tokenize import word_tokenize
 import nltk
 import emoji
 import re
+import matplotlib.pyplot as plt
+import numpy as np
 
 from util import import_dataset
 from generate_dataset import get_dataset_muestra, get_dataset_preprocessed
@@ -93,11 +95,11 @@ def show_negative_wordcloud_no_stopword():
 
 def results():
     data = {
-        "Model": ["NAIVE BAYES", "LOGISTIC REGRESSION", "RANDOM FOREST", "SVM", "VADER"],
-        "f1-Score": [0.763, 0.784, 0.754, 0.779, 0.645],
-        "Accuracy": [0.761, 0.782, 0.759, 0.778, 0.655],
-        "Recall": [0.776, 0.795, 0.743, 0.789, 0.628],
-        "Precision": [0.751, 0.772, 0.764, 0.769, 0.664]
+        "Model": ["NAIVE BAYES", "LOGISTIC REGRESSION", "RANDOM FOREST", "SVM"],
+        "f1-Score": [0.763, 0.784, 0.754, 0.779],
+        "Accuracy": [0.761, 0.782, 0.759, 0.778],
+        "Recall": [0.776, 0.795, 0.743, 0.789],
+        "Precision": [0.751, 0.772, 0.764, 0.769]
     }
 
     df = pd.DataFrame(data)
@@ -187,17 +189,17 @@ def analizar_elementos_tweet():
         'Números': dataset['numeros_count'].sum(),
         'Elementos Especiales': elementos_especiales_total,
         'Stopwords': dataset['stopwords'].sum(),
-        'Palabras mixtas': dataset['mixtas_count'].sum(),
-        'Palabras en minúsculas': dataset['minusculas_count'].sum(),
-        'Palabras en mayúsculas': dataset['mayusculas_count'].sum(),
+        #'Palabras mixtas': dataset['mixtas_count'].sum(),
+        #'Palabras en minúsculas': dataset['minusculas_count'].sum(),
+        #'Palabras en mayúsculas': dataset['mayusculas_count'].sum(),
         'Palabras': dataset['word_count'].sum()
     }
 
     # Visualización
-    plt.figure(figsize=(12, 7))
+    plt.figure(figsize=(6, 3))
     bars = plt.barh(list(totales.keys()), list(totales.values()), color='skyblue')
-    plt.xlabel('Cantidad')
-    plt.title('Conteo Total de Elementos en Tweets')
+    plt.xlabel('')
+    plt.title('')
     plt.grid(axis='x', linestyle='--', alpha=0.7)
 
     for bar in bars:
@@ -208,4 +210,77 @@ def analizar_elementos_tweet():
     plt.show()
 
 
-get_info()
+def graficar_accuracy():
+    # Nombres de los modelos
+    modelos = ['Naive Bayes', 'Logistic Regression', 'Random Forest', 'SVM']
+    
+    # Métricas
+    accuracy = [0.917, 0.903, 0.88, 0.932]
+    f1_score = [0.925, 0.917, 0.885, 0.939]
+
+    # Posiciones
+    x = np.arange(len(modelos))
+    width = 0.35
+
+    # Crear gráfico
+    fig, ax = plt.subplots(figsize=(10, 6))
+    ax.bar(x - width/2, accuracy, width, label='Accuracy', color='skyblue')
+    ax.bar(x + width/2, f1_score, width, label='F1-Score', color='salmon')
+
+    # Etiquetas y formato
+    ax.set_ylabel('Puntaje')
+    ax.set_title('Comparación de Accuracy y F1-Score por Modelo')
+    ax.set_xticks(x)
+    ax.set_xticklabels(modelos)
+    ax.set_ylim([0.85, 1.0])
+    ax.legend()
+
+    # Mostrar valores encima de las barras
+    for valores, offset in zip([accuracy, f1_score], [-width/2, width/2]):
+        for i in range(len(modelos)):
+            yval = valores[i]
+            ax.text(x[i] + offset, yval + 0.005, f'{yval:.3f}', 
+                    ha='center', va='bottom', fontsize=9)
+
+    plt.tight_layout()
+    plt.show()
+
+def graficar_accuracy_svm():
+    # Nombre del modelo
+    modelos = ['SVM']
+    
+    # Métricas de SVM
+    accuracy = [0.932]
+    f1_score = [0.939]
+
+    # Posición
+    x = np.arange(len(modelos))
+    width = 0.35
+
+    # Crear gráfico
+    fig, ax = plt.subplots(figsize=(6, 5))
+    ax.bar(x - width/2, accuracy, width, label='Accuracy', color='skyblue')
+    ax.bar(x + width/2, f1_score, width, label='F1-Score', color='salmon')
+
+    # Etiquetas y formato
+    ax.set_ylabel('Puntaje')
+    ax.set_title('Métricas del Modelo SVM')
+    ax.set_xticks(x)
+    ax.set_xticklabels(modelos)
+    ax.set_ylim([0.9, 1.0])
+    ax.legend()
+
+    # Mostrar valores encima de las barras
+    for valores, offset in zip([accuracy, f1_score], [-width/2, width/2]):
+        for i in range(len(modelos)):
+            yval = valores[i]
+            ax.text(x[i] + offset, yval + 0.003, f'{yval:.3f}', 
+                    ha='center', va='bottom', fontsize=9)
+
+    plt.tight_layout()
+    plt.show()
+
+
+
+graficar_accuracy() 
+graficar_accuracy_svm()   

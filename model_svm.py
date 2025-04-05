@@ -33,27 +33,6 @@ def svm_regression_adjustment():
     show_data_evaluation(y_test_tfidf, yprediction)
     return grid_search.best_estimator_
 
-""" 
-def evaluate_tweets_sentiment(tweets_df):
-    model = svm_()
-    positive_count = 0
-    negative_count = 0
-    
-    for tweet in tweets_df["clean_tweet"]:
-        tweet_transformed = vectorizer().transform([tweet]).toarray()
-        prediction = model.predict(tweet_transformed)
-        
-        if prediction == 1:
-            print(tweet+"-->Positivo")
-            positive_count += 1
-        else:
-            print(tweet +"--->Negativo")
-            negative_count += 1
-    print("Cantidad de Tweets Positivos: ")
-    print(positive_count)     
-    print("Cantidad de Tweets Negativos: ")
-    print(negative_count)    
-"""    
 
 def evaluate_tweets_sentiment(tweets_df):
     model = svm_()
@@ -79,5 +58,12 @@ def evaluate_tweets_sentiment(tweets_df):
     print("Cantidad de Tweets Negativos: ")
     print(negative_count)     
 
+data = {
+    'Tweet': [
+        'Estuve todo el dia llorando, pero ahora me siento bien',
+    ]
+}
 
-evaluate_tweets_sentiment(get_dataset_response())
+
+
+evaluate_tweets_sentiment(data)
