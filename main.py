@@ -13,11 +13,6 @@ def main():
     logistic_regression()
     random_forest()
     svm_()
-    svm_regression_adjustment()
-
-
-
-
 
 def execute_sentinemt_analysis(tweets):
     clean_tweets = [normalize(tweet) for tweet in tweets]

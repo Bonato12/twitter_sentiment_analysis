@@ -86,10 +86,10 @@ def show_negative_wordcloud():
     generate_wordcloud_from_label(0, '100 Palabras Más Frecuentes en Tweets Negativos')
 
 def show_positive_wordcloud_no_stopword():
-    generate_wordcloud_from_label(1, '100 Palabras Más Frecuentes en Tweets Positivos (sin Stopwords)', remove_stopwords=True)
+    generate_wordcloud_from_label(1, '100 Palabras Más Frecuentes en Tweets Positivos', remove_stopwords=True)
 
 def show_negative_wordcloud_no_stopword():
-    generate_wordcloud_from_label(0, '100 Palabras Más Frecuentes en Tweets Negativos (sin Stopwords)', remove_stopwords=True)
+    generate_wordcloud_from_label(0, '100 Palabras Más Frecuentes en Tweets Negativos', remove_stopwords=True)
 
 # --- MÉTRICAS DE MODELOS ---
 
@@ -281,6 +281,26 @@ def graficar_accuracy_svm():
     plt.show()
 
 
+def show_count_words_frequency_sin_stopwords():
+    stop_words = set(stopwords.words('spanish'))
+    all_text = ' '.join(dataset['tweet']).lower()
+    words = all_text.split()
+    filtered_words = [word for word in words if word not in stop_words and word.isalpha()]
+    word_counts = Counter(filtered_words)
+    top_words = dict(word_counts.most_common(100))
+    
+    wordcloud = WordCloud(width=800, height=400, background_color='white').generate_from_frequencies(top_words)
+    plt.figure(figsize=(10, 5))
+    plt.imshow(wordcloud, interpolation='bilinear')
+    plt.axis('off')
+    plt.title('100 Palabras Más Frecuentes')
+    plt.show()
 
-graficar_accuracy() 
-graficar_accuracy_svm()   
+
+
+
+
+
+show_count_words_frequency_sin_stopwords()
+show_positive_wordcloud_no_stopword()
+show_negative_wordcloud_no_stopword()

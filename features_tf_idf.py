@@ -4,7 +4,7 @@ from generate_dataset import get_dataset_preprocessed
 
 train_dataset = get_dataset_preprocessed()
 
-tfidf_vectorizer = TfidfVectorizer(ngram_range=(1,2))
+tfidf_vectorizer = TfidfVectorizer(ngram_range=(1,3))
 tfidf_vectorizer.fit(train_dataset['clean_tweet'].values.astype('U'))
 x = tfidf_vectorizer.transform(train_dataset['clean_tweet'].values.astype('U'))
 y = train_dataset['label']
@@ -16,6 +16,6 @@ print('Testing Data : ', X_test_tfidf.shape)
 
 def vectorizer(max_features=15000):
     df = get_dataset_preprocessed()
-    vectorizer = TfidfVectorizer(ngram_range=(1,2))
+    vectorizer = TfidfVectorizer(ngram_range=(1,3))
     vectorizer.fit(df['clean_tweet'].values.astype('U'))
     return vectorizer

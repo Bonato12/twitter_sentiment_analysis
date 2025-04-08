@@ -65,10 +65,9 @@ def get_responses(tweet_id):
             ids.append(tweet_id)
             texts.append(tweet_text)
         df = pd.DataFrame({'ID': ids, 'Tweet': texts})
-        df.to_csv('respuestas12.csv', index=False, encoding='utf-8')
+        df.to_csv('response.csv', index=False, encoding='utf-8')
     else:
         print("No se encontraron respuestas o hubo un error:", responses)
 
 
-get_responses(1907321786636640407)
-preprocessing_dataset_response()
+get_responses(1908875600585957484)

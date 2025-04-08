@@ -5,6 +5,9 @@ from features_tf_idf import vectorizer
 from sklearn.model_selection import GridSearchCV
 from preprocessing_text import normalize
 from  generate_dataset import get_dataset_response,get_dataset_response_preprocessed
+from util import import_dataset,export_dataset
+import config as cfg
+
 
 def svm_():
     print("<------SVM------->")
@@ -34,7 +37,7 @@ def svm_regression_adjustment():
     return grid_search.best_estimator_
 
 
-def evaluate_tweets_sentiment(tweets_df):
+def evaluate_tweets_sentiment2(tweets_df):
     model = svm_()
     positive_count = 0
     negative_count = 0
@@ -56,14 +59,37 @@ def evaluate_tweets_sentiment(tweets_df):
     print("Cantidad de Tweets Positivos: ")
     print(positive_count)     
     print("Cantidad de Tweets Negativos: ")
-    print(negative_count)     
+    print(negative_count)    
+
+def evaluate_tweets_sentiment(tweets_df):
+    model = svm_()
+    positive_count = 0
+    negative_count = 0
+    for tweet in tweets_df["Tweet"]:
+        tweet_normalize = normalize(tweet)
+        if not tweet_normalize or tweet_normalize.isspace():
+            continue
+        tweet_transformed = vectorizer().transform([tweet_normalize]).toarray()
+        prediction = model.predict(tweet_transformed)
+        
+        if prediction == 1:
+            print(tweet+"-->Positivo")
+            positive_count += 1
+        else:
+            print(tweet +"--->Negativo")
+            negative_count += 1 
+    print("Cantidad de Tweets Positivos: ")
+    print(positive_count)     
+    print("Cantidad de Tweets Negativos: ")
+    print(negative_count)    
 
 data = {
     'Tweet': [
-        'Estuve todo el dia llorando, pero ahora me siento bien',
+        'No puedo mas',
     ]
 }
 
 
+response  = import_dataset(cfg.DATASET_RESPONSE_FINAL) 
 
-evaluate_tweets_sentiment(data)
+evaluate_tweets_sentiment2(response)

@@ -88,8 +88,28 @@ def manejar_contradicciones(text):
         return ultima_parte
     else:
         return text
+    
+
+def manejar_negaciones(tokens):
+    negaciones = {"no", "nunca", "jamás", "sin"}
+    resultado = []
+    tokens = [token for token in tokens if token.strip() != '']
+
+    negando = False
+    for token in tokens:
+        if token in negaciones:
+            negando = True
+            resultado.append(token)
+        elif negando:
+            resultado.append("NOT_" + token)
+            negando = False
+        else:
+            resultado.append(token)
+    return resultado
+
 
 def normalize(text):
+    text = manejar_contradicciones(text)
     text = remove_urls(text)
     text = remove_mentions(text)
     text = convert_emojis_to_words(text)
@@ -99,6 +119,6 @@ def normalize(text):
     text = replace_number(text)
     text = remove_punctuation(text)
     text = lemmatize_verbs(text)
+    text = manejar_negaciones(text)
     return ' '.join(text)
-
 
