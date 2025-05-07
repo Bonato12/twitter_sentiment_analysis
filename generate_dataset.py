@@ -31,8 +31,6 @@ def get_dataset_response():
     response  = import_dataset(cfg.DATASET_RESPONSE) 
     return response
 
-def get_dataset_response_preprocessed():
-    response  = import_dataset(cfg.DATASET_RESPONSE_PREPROCESSED_PATH) 
-    return response
+
     
 generate_dataset_muestra()

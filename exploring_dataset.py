@@ -19,12 +19,9 @@ import config as cfg
 # --- DESCARGA DE RECURSOS NLTK ---
 nltk.download('stopwords')
 nltk.download('punkt')
-
-# --- CARGA DE DATOS ---
 dataset = get_dataset_muestra()
 stop_words = set(stopwords.words('spanish'))
 
-# --- FUNCIONES GENERALES DE INFORMACIÓN Y VISUALIZACIÓN ---
 
 def get_info():
     print("Cantidad Originales de Tweets:", len(dataset))

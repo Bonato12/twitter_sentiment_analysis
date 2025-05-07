@@ -160,7 +160,6 @@ def normalize(text):
     text = remove_urls(text)
     text = remove_mentions(text)
     text = convert_emojis_to_words(text)
-    #text = replace_number(text)
 
     tokens  = tokenize_and_lemmatize(text)
     tokens  = remove_stopwords(tokens )

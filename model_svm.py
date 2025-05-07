@@ -87,8 +87,5 @@ def evaluate_tweets_sentiment(tweets_df):
 
 
 
-
-response  = import_dataset(cfg.DATASET_RESPONSE_FINAL) 
-
+response  = import_dataset(cfg.DATASET_RESPONSE) 
 evaluate_tweets_sentiment(response)
-
