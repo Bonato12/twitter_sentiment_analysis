@@ -10,7 +10,6 @@ def naive_bayes():
     show_data_evaluation(y_test_tfidf, yprediction) 
     return model
 
-
 def evaluate_tweets_sentiment(tweets):
     model = naive_bayes()
     positive_count = 0

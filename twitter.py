@@ -65,9 +65,18 @@ def get_responses(tweet_id):
             ids.append(tweet_id)
             texts.append(tweet_text)
         df = pd.DataFrame({'ID': ids, 'Tweet': texts})
-        df.to_csv('response.csv', index=False, encoding='utf-8')
+        df.to_csv('response_milei2.csv', index=False, encoding='utf-8')
     else:
         print("No se encontraron respuestas o hubo un error:", responses)
 
 
-get_responses(1908875600585957484)
+#get_responses(1908875600585957484)
+#https://x.com/therealbuni/status/1911213828953559248
+
+
+#get_responses(1911213828953559248)
+
+
+#https://x.com/Trumperizar/status/1910873110888272050
+
+get_responses(1910873110888272050)

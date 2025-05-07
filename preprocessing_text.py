@@ -9,12 +9,12 @@ import stanza
 import warnings
 warnings.filterwarnings("ignore", category=FutureWarning)
 
-nlp = spacy.load("es_core_news_sm")
+#nlp = spacy.load("es_core_news_sm")
 
-nltk.download('stopwords')
-nltk.download('punkt')
-nltk.download('wordnet')
-nltk.download('punkt_tab')
+#nltk.download('stopwords')
+#nltk.download('punkt')
+#nltk.download('wordnet')
+#nltk.download('punkt_tab')
 
 #stanza.download('es')
 nlp = stanza.Pipeline(lang='es', processors='tokenize,mwt,pos,lemma')
@@ -23,7 +23,7 @@ nlp = stanza.Pipeline(lang='es', processors='tokenize,mwt,pos,lemma')
 stopwords_importantes = {
     "no", "muy", "realmente", "bastante", "también", "si", "como", "tan", "porque", "cuando", "quiero",
     "me", "te", "estoy", "estaba", "esto", "este", "ese", "aquí", "allí", "más", "lo", "quién", "algo",
-    "todo", "poco", "nada", "tal"
+    "todo", "poco", "nada", "tal","sin"
 }
 
 # Conectores de contradicción
@@ -66,11 +66,20 @@ def lemmatize_verbs(tokens):
     lemmatized_tokens = []
     for sent in doc.sentences:
         for word in sent.words:
-            if word.upos in ["VERB", "AUX"]:
+            if word.upos in ["VERB", "AUX", "NOUN", "ADJ", "ADV"]:
                 lemmatized_tokens.append(word.lemma if word.lemma else word.text)
             else:
                 lemmatized_tokens.append(word.text)
     return lemmatized_tokens
+
+def tokenize_and_lemmatize(text):
+    doc = nlp(text)
+    tokens = []
+    for sentence in doc.sentences:
+        for word in sentence.words:
+            lemma = word.lemma if word.lemma else word.text
+            tokens.append(lemma.lower())
+    return tokens
 
 # Reemplazo de números por palabras
 def replace_number(words):
@@ -107,18 +116,55 @@ def manejar_negaciones(tokens):
             resultado.append(token)
     return resultado
 
+def remove_emojis(text):
+    emoji_pattern = re.compile("["
+                           u"\U0001F600-\U0001F64F"  # emoticonos
+                           u"\U0001F300-\U0001F5FF"  # símbolos y pictogramas
+                           u"\U0001F680-\U0001F6FF"  # transporte y mapas
+                           u"\U0001F1E0-\U0001F1FF"  # banderas
+                           u"\U00002500-\U00002BEF"  # símbolos chinos
+                           u"\U00002702-\U000027B0"
+                           u"\U000024C2-\U0001F251"
+                           u"\U0001f926-\U0001f937"
+                           u"\U00010000-\U0010ffff"
+                           u"\u2640-\u2642"
+                           u"\u2600-\u2B55"
+                           u"\u200d"
+                           u"\u23cf"
+                           u"\u23e9"
+                           u"\u231a"
+                           u"\ufe0f"  # marcas de variación
+                           u"\u3030"
+                           "]+", flags=re.UNICODE)
+    return emoji_pattern.sub(r'', text)
+
+def manage_negations(tokens, window=2):
+    negations = {"no", "nunca", "jamás", "sin"}
+    result = []
+    i = 0
+    while i < len(tokens):
+        token = tokens[i]
+        if token in negations:
+            result.append(token)
+            for j in range(1, window + 1):
+                if i + j < len(tokens):
+                    result.append("NOT_" + tokens[i + j])
+            i += window + 1
+        else:
+            result.append(token)
+            i += 1
+    return result
 
 def normalize(text):
     text = manejar_contradicciones(text)
     text = remove_urls(text)
     text = remove_mentions(text)
     text = convert_emojis_to_words(text)
-    text = tokenize(text)
-    text = to_lowercase(text)
-    text = remove_stopwords(text)
-    text = replace_number(text)
-    text = remove_punctuation(text)
-    text = lemmatize_verbs(text)
-    text = manejar_negaciones(text)
-    return ' '.join(text)
+    #text = replace_number(text)
 
+    tokens  = tokenize_and_lemmatize(text)
+    tokens  = remove_stopwords(tokens )
+    tokens  = replace_number(tokens )
+    tokens  = remove_punctuation(tokens )
+    tokens  = manage_negations(tokens )
+    return ' '.join(tokens )

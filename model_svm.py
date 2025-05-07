@@ -14,7 +14,7 @@ def svm_():
     model = svm.SVC(kernel='linear')
     model.fit(X_train_tfidf, y_train_tfidf) 
     yprediction = model.predict(X_test_tfidf) 
-    show_data_evaluation(y_test_tfidf, yprediction)    
+    #show_data_evaluation(y_test_tfidf, yprediction)    
     return model
 
 def svm_regression_adjustment():
@@ -66,30 +66,33 @@ def evaluate_tweets_sentiment(tweets_df):
     positive_count = 0
     negative_count = 0
     for tweet in tweets_df["Tweet"]:
+        print(tweet)
         tweet_normalize = normalize(tweet)
+
         if not tweet_normalize or tweet_normalize.isspace():
-            continue
+             print(f"Tweet vacío o inválido: '{tweet}' - Saltando...")
+             continue
         tweet_transformed = vectorizer().transform([tweet_normalize]).toarray()
         prediction = model.predict(tweet_transformed)
         
         if prediction == 1:
-            print(tweet+"-->Positivo")
+            print("-->Positivo")
             positive_count += 1
         else:
-            print(tweet +"--->Negativo")
+            print("--->Negativo")
             negative_count += 1 
     print("Cantidad de Tweets Positivos: ")
     print(positive_count)     
     print("Cantidad de Tweets Negativos: ")
     print(negative_count)    
 
-data = {
-    'Tweet': [
-        'No puedo mas',
-    ]
-}
 
+
+
+
+#response  = import_dataset(cfg.DATASET_RESPONSE_FINAL) 
 
 response  = import_dataset(cfg.DATASET_RESPONSE_FINAL) 
 
-evaluate_tweets_sentiment2(response)
+evaluate_tweets_sentiment(response)
+

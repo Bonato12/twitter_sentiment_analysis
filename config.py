@@ -8,5 +8,7 @@ DATASET_ES_MUESTRA_PREPROCESSED_PATH = PATH_BASE + "//datasets/dataset_es_muestr
 
 DATASET_RESPONSE = PATH_BASE + "//respuestas12.csv"
 DATASET_RESPONSE_FINAL = PATH_BASE + "//respuestas122025.csv"
+DATASET_RESPONSE_MILEI_FINAL = PATH_BASE + "//response_milei.csv"
+
 DATASET_RESPONSE_PREPROCESSED_PATH = PATH_BASE + "//datasets/dataset_response_preprocessed.csv"
 
