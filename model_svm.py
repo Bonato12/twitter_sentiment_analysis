@@ -4,8 +4,7 @@ from features_tf_idf import X_train_tfidf, X_test_tfidf, y_train_tfidf, y_test_t
 from features_tf_idf import vectorizer
 from sklearn.model_selection import GridSearchCV
 from preprocessing_text import normalize
-from  generate_dataset import get_dataset_response,get_dataset_response_preprocessed
-from util import import_dataset,export_dataset
+from util import import_dataset
 import config as cfg
 
 
@@ -88,9 +87,6 @@ def evaluate_tweets_sentiment(tweets_df):
 
 
 
-
-
-#response  = import_dataset(cfg.DATASET_RESPONSE_FINAL) 
 
 response  = import_dataset(cfg.DATASET_RESPONSE_FINAL) 
 
